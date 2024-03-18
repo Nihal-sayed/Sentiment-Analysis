@@ -1,10 +1,7 @@
-from flask import Flask, render_template, request
+import streamlit as st
 import pickle
 import re
-import streamlit as st
 from textblob import TextBlob
-
-app = Flask(__name__)
 
 # Load the trained model
 with open('model.pkl', 'rb') as f:
@@ -28,16 +25,14 @@ def analyze_sentiment(text):
     else:
         return 'Neutral'
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+# Main Streamlit app
+def main():
+    st.title('Sentiment Analysis')
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    if request.method == 'POST':
-        review_text = request.form['review_text']
+    review_text = st.text_area('Enter your review:')
+    if st.button('Predict Sentiment'):
         sentiment = analyze_sentiment(review_text)
-        return render_template('result.html', sentiment=sentiment)
+        st.write(f'The sentiment of the review is: {sentiment}')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    main()
